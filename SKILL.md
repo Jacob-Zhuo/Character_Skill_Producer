@@ -263,6 +263,17 @@ python scripts/source_search.py "<角色名>" --work "<作品名>" --mode discov
 
 候选明确时自动推进；多个候选时让用户选择。
 
+> **sources.json 的来源构成（显式约定）**
+>
+> `references/sources.json` 是**整个调研阶段（Phase 1–4）的来源最终档案**，不只包含 `source_search.py` 的命中记录。它的内容来自四条路径，全部按 CSP 检索优先级汇总：
+>
+> 1. **本地脚本命中**：`source_search.py --mode discover`、`moegirl_api.py`、`bwiki_api.py` 自动检索到的条目；
+> 2. **外部检索补充**：网页搜索 skill / MCP / WebFetch 抓取的官方站点、访谈、专栏、Fandom Wiki 等（仅在本地脚本未覆盖或失败时补缺）；
+> 3. **失败记录**：尝试过但未命中的来源（`status=failed` + `error`），包括 adapter 未实现、页面不存在、超时等——失败也要留下证据；
+> 4. **用户提供材料**：官方设定集、访谈原文、BD 特典、字幕、截图、游戏剧情文本，`officiality=user_provided`。
+>
+> 因此 `sources.json` 的记录数通常远多于 `source_search.py` 的终端输出——后者只是起点情报，agent 在 Phase 3 各研究线中持续追加外部来源并归档到 `sources.json`。每条记录必须保留 `retrieved_at` 与 `status`，供 `merge_research.py` / `generate_manifest.py` / `quality_check.py` 统计验证。
+
 ### Phase 2：创建目录与来源索引
 
 创建目标结构，写入空的：
