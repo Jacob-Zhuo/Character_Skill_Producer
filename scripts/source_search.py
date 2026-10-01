@@ -282,4 +282,4 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
-    sys.exit(main(["藤都子", "--work", "梦限大MewType", "--mode", "discover"]))
+    sys.exit(main())

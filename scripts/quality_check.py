@@ -35,7 +35,7 @@ def check_behavior_patterns(content):
     in_section = False
     pattern_clues = 0
     for line in content.split("\n"):
-        if re.match(r"^##\s+.*行为规范|行为动态|行为模式", line):
+        if re.match(r"^##\s+.*(?:行为规范|行为动态|行为模式)", line):
             in_section = True
             continue
         if in_section and re.match(r"^##\s+", line) and "行为" not in line:
