@@ -2,7 +2,7 @@
 
 > 状态：待评审
 > 目标：把「跨媒体角色补调研未覆盖媒体」这一人工步骤，提炼为可复用、可追踪、可恢复的 `coverage_research.py` 脚本。
-> 触发背景：藤都子 Skill 的 `manifest.json` 中 `not_covered` 列出游戏《交织的乐章》、广播节目、有声漫画、巡演等未覆盖媒体，目前靠人工判断是否补调研，无工具支撑。
+> 触发背景：藤都子 Skill 的 `references/research/06-media-coverage.md`「未覆盖媒体/缺口」记录了游戏《交织的乐章》剧情文本、动画 BD 特典/逐集台词、47 都道府县巡演后续、中之人访谈等未覆盖项（另有「已覆盖但未细读」的广播、有声漫画）；`manifest.json.not_covered` 目前仅含默认资料边界提示语，不逐项列出。当前补调研靠人工判断，无工具支撑。
 
 ---
 
@@ -51,6 +51,8 @@ distillation.md → SKILL.md → generate_manifest.py → quality_check.py
 | `interview` | 访谈 | animatetimes 对谈 |
 | `official_article` | 官方专栏/note | 都子 note 博客 |
 | `manual` | 需人工提供（设定集/BD特典） | 用户官方材料 |
+
+> 注：上表是对 `references/source-output-schema.md` 中 `media_type`（「可用值示例」，非穷举）的**扩展提案**；其中 `manual` 对应 schema 中用户提供材料的 `user_material`，实现时统一命名并回写 schema 文档。
 
 ### 3.2 适配器矩阵
 
@@ -112,7 +114,7 @@ python scripts/coverage_research.py output/fuji-miyako
 
 输出
 ├── sources.json[]                       ← append 新记录（status=ok/failed）
-├── 06-media-coverage.md                 ← 更新「已覆盖/未覆盖」表格
+├── 06-media-coverage.md                 ← 更新「已覆盖媒体 / 未覆盖媒体」章节
 ├── manifest.json.not_covered            ← 移除已覆盖项；failed 项保留并标注 last_attempt
 └── stdout 摘要                          ← 每个未覆盖项：类型 → 结果 → 来源 id
 ```
@@ -171,6 +173,7 @@ python scripts/coverage_research.py output/fuji-miyako
 
 ## 八、幂等与更新策略
 
+- **not_covered 结构约束**：当前 schema 中 `manifest.not_covered` 是**字符串列表**（如默认的资料边界提示语），写不下「带 `last_attempt_at` 的失败项」。实现脚本写入结构化失败项前，需先扩展该字段结构并同步 `references/source-output-schema.md`（例如改为 `[{item, media_type, last_attempt_at, status}]` 或拆出独立字段）。
 - **已覆盖判定**：`sources.json` 中存在 `status=ok` 且 `media_type` 相同、`work` 相同，或 `06-media-coverage.md`「已覆盖媒体」表已含该条目 → 跳过。
 - **失败重试**：失败项写入 `not_covered` 时附 `last_attempt_at`；`--force` 或超过 7 天可重试。
 - **时间线边界**：每次补调研更新 `manifest.latest_source_checked_at` 与 `covered_until`，提示 SKILL.md 的资料日期需同步刷新。
@@ -206,4 +209,5 @@ python scripts/coverage_research.py output/fuji-miyako
 - **新增**：`docs/coverage-research-design.md`（本文档）
 - **待实现**（评审通过后）：`scripts/coverage_research.py`、`source_registry.py` 的 `MEDIA_TYPE_HINTS`/`MEDIA_ADAPTER_MATRIX`
 - **待修改**：`AGENTS.md`（Phase 4 补调研命令）、`SKILL.md`（可选步骤）
-- **不改**：`merge_research.py`、`generate_manifest.py`、`moegirl_api.py`、`bwiki_api.py` 核心逻辑
+- **不改**：`merge_research.py`、`generate_manifest.py`、`bwiki_api.py` 核心逻辑。
+- **后续变更（不影响本设计）**：`moegirl_api.py` 已按面向对象重构为 `MoegirlApiClient`（CLI 参数、stdout JSON 结构、退出码均不变），`source_search.py` 的 `run_python_script` 调用方式仍兼容。
