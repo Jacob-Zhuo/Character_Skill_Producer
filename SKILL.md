@@ -160,7 +160,7 @@ output/<character-slug>/
 
 Skill 必须自包含。复制整个目录就能独立使用。研究文件不完整时，不得声称生成完成。
 
-注意区分：`output/` 存放每次生成的角色技能产物（不跟踪）；`examples/csp/` 是 CSP 元技能自身的可安装副本（跟随 Git 跟踪）。
+注意区分：`output/` 存放每次生成的角色技能产物（不跟踪）。
 
 ---
 
@@ -509,18 +509,6 @@ python scripts/distill_prompt.py <skill_dir>
 - 用知乎、微信公众号、百度百科做来源；
 - 忽略资料检索日期；
 - 用户指出新剧情时硬拗旧设定。
-
----
-
-## 部署与同步
-
-生成完成后可复制整个角色目录到 `.claude/skills/<name>/`。修改根目录 CSP 时，必须同步 `examples/csp/` 中的：
-
-- `SKILL.md`
-- `references/`
-- `scripts/`
-
-避免源码版和可安装版分叉。
 
 ---
 

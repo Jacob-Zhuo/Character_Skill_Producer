@@ -213,30 +213,6 @@ python scripts/moegirl_api.py "能天使" --full
 
 ---
 
-## 安装
-
-CSP 是一个 Claude Code / Agent Skills 风格的 meta-skill。推荐直接安装自包含版本：
-
-```bash
-skills add Jacob-Zhuo/Character_Skill_Producer
-```
-
-也可以手动安装：
-
-```bash
-git clone https://github.com/Jacob-Zhuo/Character_Skill_Producer.git
-cp -r Character_Skill_Producer/examples/csp ~/.claude/skills/csp
-```
-
-`examples/csp/` 已经打包了运行所需的脚本和模板。复制到 `.claude/skills/csp/` 后即可使用。
-
-### 依赖
-
-- Python：用于本地检索、metadata 生成、质量检查。
-- 网页搜索能力：可选增强，仅在本地脚本未覆盖或失败时补缺。
-
----
-
 ## 使用
 
 安装后，对 Claude Code 说：
@@ -262,49 +238,7 @@ CSP 会先确认角色和作品。如果你手上有设定集、访谈、BD 特�
 
 ## 工作原理
 
-CSP 默认采用最高质量生成模式，不提供省 token 快速版。完整执行流程分为 Phase 0–9，各阶段使用的脚本标注如下：
-
-```
-  Phase 0  需求确认 ─────────────── [无脚本] agent 确认角色/作品/范围/官方材料
-     │
-     ▼
-  Phase 1  来源发现 ─────────────── source_search.py --mode discover
-                                    moegirl_api.py · bwiki_api.py
-                                    source_registry.py (来源分级/跨媒体判定)
-     │
-     ▼
-  Phase 2  目录与来源索引 ───────── [无脚本] agent 建 output/<slug>/ 与
-                                    references/sources.json 骨架
-     │
-     ▼
-  Phase 3  5 Agent 并行采集 ─────── moegirl_api.py --full / --search
-                                    bwiki_api.py · source_search.py
-                                    (5 个上下文隔离的子 agent 各自检索)
-     │
-     ▼
-  Phase 4  跨媒体覆盖记录 ───────── [无脚本] agent 写 06-media-coverage.md
-     │
-     ▼
-  Phase 5  调研质量检查点 ───────── merge_research.py
-     │
-     ▼
-  Phase 6  行为蒸馏 ─────────────── [无脚本] agent 参考 distillation-framework.md
-     │
-     ▼
-  Phase 7  蒸馏确认检查点 ───────── [无脚本] agent 向用户展示并等待确认
-     │
-     ▼
-  Phase 8  构建 Skill 与 manifest ─ 参考 skill-template.md 组装 SKILL.md
-                                    generate_manifest.py
-     │
-     ▼
-  Phase 9  质量验证 ─────────────── quality_check.py → quality-report.json
-```
-
-- **有脚本的阶段**：Phase 1 / 3（检索）、5（调研检查）、8（manifest）、9（质量验证）。
-- **无脚本的阶段**：Phase 0 / 2 / 4 / 6 / 7 由 agent 人工执行，不依赖工具。
-
-具体来说，输入角色后，CSP 会做六件事：
+CSP 默认采用最高质量生成模式，不提供省 token 快速版。输入角色后，它会做六件事：
 
 **1. 本地来源发现**
 优先运行 `scripts/source_search.py` 和站点 adapter，检索萌娘百科、MediaWiki 系站点、作品 Wiki 等核心来源。搜索 skill / MCP 只作为补缺。
@@ -358,8 +292,6 @@ yahata-umiri/
         ├── 05-key-scenes.md          # 关键场景、压力下的决策逻辑
         └── 06-media-coverage.md      # 跨媒体覆盖、未覆盖内容、时间线
 ```
-
-复制整个目录到 `.claude/skills/<name>/`，就能在对话里直接调用。
 
 ---
 

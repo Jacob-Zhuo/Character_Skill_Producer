@@ -70,21 +70,21 @@ python scripts/bwiki_api.py "角色名" --game 明日方舟
 
 根目录中的文件是 CSP 开发时的规范源文件：
 
-| 文件 | 用途 |
-|---|---|
-| `SKILL.md` | CSP 元技能的主体及流程说明 |
-| `references/skill-template.md` | 组装生成的角色技能时使用的模板 |
-| `references/distillation-framework.md` | 将研究资料转化为可执行行为模式的方法 |
-| `references/source-output-schema.md` | `sources.json`、`manifest.json` 和 `quality-report.json` 的预期结构 |
-| `scripts/source_search.py` | 统一的本地资料搜索入口 |
-| `scripts/source_registry.py` | 资料来源分级、排除域名、作品提示和跨媒体作品规则 |
-| `scripts/moegirl_api.py` | 萌娘百科 MediaWiki API 封装 |
-| `scripts/bwiki_api.py` | BWIKI（biligame）MediaWiki API 封装 |
-| `scripts/merge_research.py` | 研究摘要与检查点生成器 |
-| `scripts/generate_manifest.py` | 清单生成与更新工具 |
-| `scripts/quality_check.py` | 生成的角色技能质量检查工具 |
+| 文件                                     | 用途                                                                      |
+| ---------------------------------------- | ------------------------------------------------------------------------- |
+| `SKILL.md`                             | CSP 元技能的主体及流程说明                                                |
+| `references/skill-template.md`         | 组装生成的角色技能时使用的模板                                            |
+| `references/distillation-framework.md` | 将研究资料转化为可执行行为模式的方法                                      |
+| `references/source-output-schema.md`   | `sources.json`、`manifest.json` 和 `quality-report.json` 的预期结构 |
+| `scripts/source_search.py`             | 统一的本地资料搜索入口                                                    |
+| `scripts/source_registry.py`           | 资料来源分级、排除域名、作品提示和跨媒体作品规则                          |
+| `scripts/moegirl_api.py`               | 萌娘百科 MediaWiki API 封装                                               |
+| `scripts/bwiki_api.py`                 | BWIKI（biligame）MediaWiki API 封装                                       |
+| `scripts/merge_research.py`            | 研究摘要与检查点生成器                                                    |
+| `scripts/generate_manifest.py`         | 清单生成与更新工具                                                        |
+| `scripts/quality_check.py`             | 生成的角色技能质量检查工具                                                |
 
-生成的角色技能归档在 `output/<slug>/` 下（如 `output/fuji-miyako/`）。`output/` 已加入 Git 忽略列表，**不纳入版本控制**，用于存放每次生成的角色技能产物。本地安装技能时，可整体复制该目录到 opencode 的项目级技能目录 `.opencode/skills/<slug>/` 或全局 `~/.config/opencode/skills/<slug>/`，也可通过 `skills.paths` 配置扫描其他位置。`.claude/` 已加入 Git 忽略列表，不应作为源文件处理。注意区分：`examples/csp/` 是 CSP 元技能自身的可安装副本（跟随 Git 跟踪），与 `output/` 中的角色技能产物不同。
+生成的角色技能归档在 `output/<slug>/` 下（如 `output/fuji-miyako/`）。`output/` 已加入 Git 忽略列表，**不纳入版本控制**，用于存放每次生成的角色技能产物。
 
 ### 生成的技能目录结构
 
@@ -127,13 +127,13 @@ python scripts/bwiki_api.py "角色名" --game 明日方舟
 
 CSP 的内容必须有资料依据。优先使用用户提供的官方材料，再查找公开资料：
 
-| 优先级 | 资料来源 |
-|---|---|
-| 最高 | 用户提供的官方书籍、访谈、BD 特典、字幕、截图、文字记录 |
-| 高 | 官方网站、官方角色简介、官方剧情文本、萌娘百科、维基百科、系列作品的 Fandom Wiki |
-| 中 | Bangumi、AniDB、游戏剧情、优质 Bilibili 专栏、Anime News Network、Bestdori、BWIKI |
-| 低 | 粉丝讨论或社区解读，必须明确标为推测 |
-| 排除 | 知乎、微信公众号、百度百科 |
+| 优先级 | 资料来源                                                                          |
+| ------ | --------------------------------------------------------------------------------- |
+| 最高   | 用户提供的官方书籍、访谈、BD 特典、字幕、截图、文字记录                           |
+| 高     | 官方网站、官方角色简介、官方剧情文本、萌娘百科、维基百科、系列作品的 Fandom Wiki  |
+| 中     | Bangumi、AniDB、游戏剧情、优质 Bilibili 专栏、Anime News Network、Bestdori、BWIKI |
+| 低     | 粉丝讨论或社区解读，必须明确标为推测                                              |
+| 排除   | 知乎、微信公众号、百度百科                                                        |
 
 重要说法至少使用两个独立来源。保留来源之间的矛盾，不要强行统一。如果公开资料不足，要明确标出缺口，不要编造角色行为。
 
