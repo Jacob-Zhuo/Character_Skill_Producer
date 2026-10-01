@@ -139,10 +139,10 @@ Windows 本机使用 `python`；Linux/macOS 用户可尝试 `python3`。
 
 ## 生成目录结构
 
-确认角色后，先创建目录，再开始研究：
+确认角色后，先创建目录，再开始研究。生成的角色技能统一归档在仓库 `output/<slug>/` 下；`output/` 已加入 Git 忽略列表，不纳入版本控制：
 
 ```text
-<character-slug>/
+output/<character-slug>/
 ├── SKILL.md
 ├── manifest.json
 └── references/
@@ -159,6 +159,8 @@ Windows 本机使用 `python`；Linux/macOS 用户可尝试 `python3`。
 ```
 
 Skill 必须自包含。复制整个目录就能独立使用。研究文件不完整时，不得声称生成完成。
+
+注意区分：`output/` 存放每次生成的角色技能产物（不跟踪）；`examples/csp/` 是 CSP 元技能自身的可安装副本（跟随 Git 跟踪）。
 
 ---
 

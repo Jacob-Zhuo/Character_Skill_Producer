@@ -3,6 +3,9 @@
 __pycache__/
 *.pyc
 
+# Generated character skills (not part of source tree)
+output/
+
 # Internal docs (not needed for skill installation)
 PRD.md
 push_api.py
