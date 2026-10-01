@@ -1,6 +1,6 @@
-# CSP Scripts 说明
+# CCP Scripts 说明
 
-本目录是 CSP（Character Skill Producer）的本地脚本。它们承担**核心站点检索、来源归一化、调研检查点、metadata 生成与质量验证**，供生成角色技能时按流程调用。
+本目录是 CCP（Character Card Producer）的本地脚本。它们承担**核心站点检索、来源归一化、调研检查点、metadata 生成与质量验证**，供生成写作用角色卡时按流程调用。
 
 > 环境注意：Windows 本机使用 `python`（无 `python3` 别名）；路径使用正斜杠。
 > 所有脚本输出均为可读 JSON / 表格，主要供「执行者（AI 代理或人）」阅读判断，不构成机器管道中间产物。
@@ -14,8 +14,8 @@
 | `moegirl_api.py` | 萌娘百科 MediaWiki API 封装 | stdout JSON：条目正文/简介/候选/原文 | **Phase 1/3** 检索核心站点 |
 | `bwiki_api.py` | BWIKI（biligame）MediaWiki API 封装 | stdout JSON：游戏百科条目 | **Phase 1/3** 检索手游角色数据 |
 | `merge_research.py` | 研究摘要与检查点生成器 | 终端表格报告（不写文件） | **Phase 5** 调研质量检查点 |
-| `generate_manifest.py` | 生成 / 更新 `manifest.json` | 写 `manifest.json` | **Phase 8** 构建 Skill 与 manifest |
-| `quality_check.py` | 生成技能质量检查 | 写 `references/quality-report.json` | **Phase 9** 质量验证 |
+| `generate_manifest.py` | 生成 / 更新 `manifest.json` | 写 `manifest.json` | **Phase 8** 构建角色卡与 manifest |
+| `quality_check.py` | 生成角色卡质量检查 | 写 `references/quality-report.json` | **Phase 9** 质量验证 |
 
 ---
 
@@ -79,8 +79,8 @@
 
 ### 6. `generate_manifest.py` — manifest 生成 / 更新
 
-- **作用**：根据 `SKILL.md`、`sources.json`、`research/06-media-coverage.md` 生成或更新 `manifest.json`（含 `research_completed_at`、`latest_source_checked_at`、`covered_until`、`source_count`、`source_tiers`、`covered_media` 等必填字段）。
-- **何时调用**：Phase 8「构建 Skill 与 manifest」；更新已有技能时重新运行。`--character` / `--work` 用于补充显示名。
+- **作用**：根据 `character-card.md`、`sources.json`、`research/06-media-coverage.md` 生成或更新 `manifest.json`（含 `artifact_type`、`research_completed_at`、`latest_source_checked_at`、`covered_until`、`source_count`、`source_tiers`、`covered_media` 等必填字段）。
+- **何时调用**：Phase 8「构建角色卡与 manifest」；更新已有角色卡时重新运行。`--character` / `--work` 用于补充显示名。
 - **注意**：`covered_media` 会复用已存在的旧值；若 `06-media-coverage.md` 结构调整，需删除旧 `manifest.json` 后重新生成。
 - **示例**：
   ```bash
@@ -89,13 +89,13 @@
 
 ### 7. `quality_check.py` — 质量验证
 
-- **作用**：对技能目录或单个 `SKILL.md` 执行 11 项检查：行为模式数、表达质感、矛盾保留、角色扮演规则、行为示例、诚实边界、来源标注、manifest、sources.json、资料时间边界与更新回应、研究文件完整性。
-- **何时调用**：Phase 9「质量验证」，交付前的最后一道门；更新技能后也要重跑。结果写入 `references/quality-report.json`。
-- **判定**：11/11 通过才可声称完成；未通过项会打印 FAIL 详情，且失败数超过一项时以非零码退出。
+- **作用**：对角色卡目录或单个 `character-card.md` 执行 13 项检查：行为模式数、对白/内心戏写作规范、矛盾保留、写作视角规则、场景写作示例、场景与剧情设计规范、反 OOC 检查清单、诚实边界、来源标注、manifest（含 `artifact_type`）、sources.json、资料时间边界与更新回应、研究文件完整性。
+- **何时调用**：Phase 9「质量验证」，交付前的最后一道门；更新角色卡后也要重跑。结果写入 `references/quality-report.json`。
+- **判定**：13/13 通过才可声称完成；未通过项会打印 FAIL 详情，且失败数超过一项时以非零码退出。
 - **示例**：
   ```bash
   python scripts/quality_check.py output/fuji-miyako
-  python scripts/quality_check.py output/fuji-miyako/SKILL.md
+  python scripts/quality_check.py output/fuji-miyako/character-card.md
   ```
 
 ---
@@ -111,7 +111,7 @@
 | Phase 5 调研质量检查点 | 检查研究完整度 | `merge_research.py` |
 | Phase 6 行为蒸馏 | 写 `distillation.md` | （文档，无需脚本） |
 | Phase 7 蒸馏确认 | 向用户展示 | （人工，无需脚本） |
-| Phase 8 构建 Skill 与 manifest | 组装 `SKILL.md` + 生成 metadata | `generate_manifest.py` |
+| Phase 8 构建角色卡与 manifest | 组装 `character-card.md` + 生成 metadata | `generate_manifest.py` |
 | Phase 9 质量验证 | 交付前检查 | `quality_check.py` |
 
 > 外部网页搜索（搜索 skill / MCP / WebFetch）不在本目录：仅作本地脚本未覆盖或失败时的补强，且需在 `sources.json` 记录。

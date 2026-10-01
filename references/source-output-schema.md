@@ -1,13 +1,13 @@
 # 来源与 metadata 结构规范
 
-CSP 的生成结果必须可追溯、可复查、可更新。本文件定义 `references/sources.json`、`manifest.json` 和质量报告的最低结构。
+CCP 的生成结果必须可追溯、可复查、可更新。本文件定义 `references/sources.json`、`manifest.json` 和质量报告的最低结构。
 
 ## sources.json
 
 位置：
 
 ```text
-<skill_dir>/references/sources.json
+<card_dir>/references/sources.json
 ```
 
 类型：数组。每个对象表示一次成功或失败的来源检索。
@@ -110,14 +110,14 @@ CSP 的生成结果必须可追溯、可复查、可更新。本文件定义 `re
 }
 ```
 
-失败记录用于证明 CSP 查过该来源，也用于后续更新。
+失败记录用于证明 CCP 查过该来源，也用于后续更新。
 
 ## manifest.json
 
 位置：
 
 ```text
-<skill_dir>/manifest.json
+<card_dir>/manifest.json
 ```
 
 最低结构：
@@ -125,6 +125,7 @@ CSP 的生成结果必须可追溯、可复查、可更新。本文件定义 `re
 ```json
 {
   "schema_version": "1.0",
+  "artifact_type": "character_card",
   "name": "character-slug",
   "character": "角色名",
   "work": "作品名",
@@ -145,18 +146,18 @@ CSP 的生成结果必须可追溯、可复查、可更新。本文件定义 `re
   "source_tiers": {},
   "quality_score": null,
   "honesty_boundary": "",
-  "csp_version": "unknown"
+  "ccp_version": "unknown"
 }
 ```
 
-`latest_source_checked_at` 是面向用户解释资料边界的核心字段。用户说「最新剧情不是这样」时，角色 Skill 必须引用这个日期。
+`artifact_type` 必填，固定为 `character_card`（区分产物类型，决策点 6 = A）。`latest_source_checked_at` 是面向用户解释资料边界的核心字段。用户说「最新剧情不是这样」时，角色卡必须引用这个日期。
 
 ## quality-report.json
 
 位置：
 
 ```text
-<skill_dir>/references/quality-report.json
+<card_dir>/references/quality-report.json
 ```
 
 推荐结构：
@@ -170,14 +171,16 @@ CSP 的生成结果必须可追溯、可复查、可更新。本文件定义 `re
     "behavior_patterns": "pass",
     "expression_texture": "pass",
     "contradictions": "pass",
-    "role_play_rules": "pass",
-    "behavior_examples": "pass",
+    "writing_view_rules": "pass",
+    "scene_examples": "pass",
+    "design_spec": "pass",
+    "anti_ooc_checklist": "pass",
     "honesty_boundary": "pass",
     "source_attribution": "pass",
     "manifest": "pass",
     "sources_json": "pass",
     "research_dates": "pass",
-    "update_response": "pass"
+    "research_files": "pass"
   },
   "warnings": [],
   "failed_checks": []

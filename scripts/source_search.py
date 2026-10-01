@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unified local source discovery entrypoint for CSP.
+"""Unified local source discovery entrypoint for CCP.
 
 Object-oriented + table-driven design: each local source backend is a
 SourceAdapter subclass registered in ADAPTER_REGISTRY. Adding a new source
@@ -241,7 +241,7 @@ def emit_json(payload):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="Discover CSP character sources through local adapters")
+    parser = argparse.ArgumentParser(description="Discover CCP character sources through local adapters")
     parser.add_argument("query", nargs="?", help="character name, alias, or page title")
     parser.add_argument("--work", default="", help="work/franchise name")
     parser.add_argument("--mode", default="discover", choices=["discover"], help="discovery mode")
@@ -259,7 +259,7 @@ def main(argv=None):
                for source in requested_sources]
 
     # 结果 JSON 是给「人 / agent」阅读的情报，而非机器管道的中间产物。
-    # CSP 流程中，agent 读取本输出后据此判断：
+    # CCP 流程中，agent 读取本输出后据此判断：
     #   - records[] 里哪些来源命中（status=ok）、哪些失败（status=failed + error），据此决定是否进入 Phase 2；
     #   - cross_media_hint 是否为 True，决定是否触发跨媒体规则；
     #   - 随后把这些记录人工归档为 references/sources.json，供 merge_research.py /

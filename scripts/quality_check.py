@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate generated CSP character skills."""
+"""Validate generated CCP character cards."""
 
 import json
 import re
@@ -8,6 +8,7 @@ from datetime import date
 from pathlib import Path
 
 BLACKLISTED_DOMAINS = ["zhihu.com", "weixin.qq.com", "baike.baidu.com"]
+CARD_FILENAME = "character-card.md"
 
 
 def read_text(path):
@@ -26,7 +27,7 @@ def load_json(path, default):
 def resolve_paths(target):
     path = Path(target)
     if path.is_dir():
-        return path, path / "SKILL.md"
+        return path, path / CARD_FILENAME
     return path.parent, path
 
 
@@ -34,7 +35,7 @@ def check_behavior_patterns(content):
     in_section = False
     pattern_clues = 0
     for line in content.split("\n"):
-        if re.match(r"^##\s+.*行为动态|行为模式", line):
+        if re.match(r"^##\s+.*行为规范|行为动态|行为模式", line):
             in_section = True
             continue
         if in_section and re.match(r"^##\s+", line) and "行为" not in line:
@@ -46,10 +47,10 @@ def check_behavior_patterns(content):
 
 
 def check_expression_texture(content):
-    markers = ["句式", "词汇", "语尾", "自称", "敬语", "节奏", "沉默", "口癖", "语气", "停顿", "情绪"]
+    markers = ["句式", "词汇", "语尾", "自称", "敬语", "节奏", "沉默", "口癖", "语气", "停顿", "情绪", "叙述距离", "盲点", "内心"]
     found = sum(1 for marker in markers if marker in content)
-    passed = "表达质感" in content and found >= 4
-    return passed, f"expression markers: {found} {'PASS' if passed else 'FAIL (expected section + >=4 markers)'}"
+    passed = "对白写作规范" in content and "内心戏写作规范" in content and found >= 5
+    return passed, f"expression markers: {found} {'PASS' if passed else 'FAIL (expected dialogue + inner monologue sections and >=5 markers)'}"
 
 
 def check_honest_boundary(content):
@@ -68,20 +69,36 @@ def check_contradictions(content):
 
 
 def check_behavior_examples(content):
-    examples = re.findall(r"###\s+场景[一二三四五六七八九十\d]", content)
-    if not examples:
-        examples = re.findall(r"场景[一二三四五六七八九十\d]", content)
+    examples = re.findall(r"###\s+示例[一二三四五六七八九十\d]", content)
     count = len(examples)
-    passed = 3 <= count <= 8
-    return passed, f"behavior examples: {count} {'PASS' if passed else 'FAIL (expected 3-8)'}"
+    passed = 3 <= count <= 6
+    return passed, f"scene examples: {count} {'PASS' if passed else 'FAIL (expected 3-6)'}"
 
 
-def check_role_play_rules(content):
-    has_rules = "角色扮演规则" in content
-    has_exit = bool(re.search(r"退出|exit", content, re.IGNORECASE))
-    has_first_person = bool(re.search(r"用「我」|第一人称|直接以", content))
-    passed = has_rules and has_exit and has_first_person
-    return passed, f"rules:{has_rules}, exit:{has_exit}, 1st-person:{has_first_person} {'PASS' if passed else 'FAIL'}"
+def check_writing_view_rules(content):
+    has_usage = "使用说明" in content
+    has_author_view = bool(re.search(r"作者/叙述者|作者.*叙述者|以.*作者.*身份", content))
+    has_not_roleplay = bool(re.search(r"不是.{0,6}扮演|扮演.{0,6}角色|角色是笔下的对象", content))
+    has_stop = bool(re.search(r"停止引用|切换叙述者|不用管角色卡", content))
+    has_consult = bool(re.search(r"先查阅|先查|查阅", content))
+    passed = has_usage and has_author_view and has_not_roleplay and has_stop and has_consult
+    return passed, f"usage:{has_usage}, author-view:{has_author_view}, not-roleplay:{has_not_roleplay}, stop:{has_stop}, consult:{has_consult} {'PASS' if passed else 'FAIL'}"
+
+
+def check_design_spec(content):
+    has_section = "场景与剧情设计规范" in content
+    keywords = ["角色驱动", "场景目标", "障碍", "硬约束", "知识边界", "越界时刻"]
+    found = sum(1 for keyword in keywords if keyword in content)
+    passed = has_section and found >= 4
+    return passed, f"design spec:{has_section}, keywords:{found} {'PASS' if passed else 'FAIL (expected section + >=4 keywords)'}"
+
+
+def check_anti_ooc(content):
+    has_section = "反 OOC 检查清单" in content
+    match = re.search(r"(?:##\s+.*反 OOC 检查清单)(.*?)(?=\n##\s|\Z)", content, re.DOTALL)
+    count = len(re.findall(r"^\d+\.", match.group(1), re.MULTILINE)) if match else 0
+    passed = has_section and count >= 8
+    return passed, f"anti-OOC checklist: {count} items {'PASS' if passed else 'FAIL (expected >=8)'}"
 
 
 def check_source_attribution(content, skill_dir):
@@ -95,7 +112,7 @@ def check_source_attribution(content, skill_dir):
 def check_manifest(skill_dir):
     path = skill_dir / "manifest.json"
     data = load_json(path, {})
-    required = ["schema_version", "name", "character", "work", "generated_at", "research_completed_at", "latest_source_checked_at", "covered_until", "source_count"]
+    required = ["schema_version", "artifact_type", "name", "character", "work", "generated_at", "research_completed_at", "latest_source_checked_at", "covered_until", "source_count"]
     missing = [key for key in required if key not in data or data.get(key) in (None, "")]
     return not missing, f"manifest {'PASS' if not missing else 'FAIL missing ' + ', '.join(missing)}"
 
@@ -129,7 +146,7 @@ def check_sources_json(skill_dir):
 
 def check_research_dates(content):
     has_date_section = "资料时间边界" in content
-    has_update_phrase = "我的资料更新至" in content and "这可能会消耗一些 Token" in content
+    has_update_phrase = "本卡资料更新至" in content and "这可能会消耗一些 Token" in content
     date_like = bool(re.search(r"20\d{2}-\d{2}-\d{2}|YYYY-MM-DD", content))
     passed = has_date_section and has_update_phrase and date_like
     return passed, f"date section:{has_date_section}, update response:{has_update_phrase}, date:{date_like} {'PASS' if passed else 'FAIL'}"
@@ -150,25 +167,40 @@ def write_report(skill_dir, results):
         return
     passed_count = sum(1 for result in results if result[1])
     score = round(passed_count / len(results), 3) if results else 0
+    check_keys = {
+        "Behavior Patterns": "behavior_patterns",
+        "Expression Texture": "expression_texture",
+        "Contradictions": "contradictions",
+        "Writing View Rules": "writing_view_rules",
+        "Scene Examples": "scene_examples",
+        "Design Spec": "design_spec",
+        "Anti-OOC Checklist": "anti_ooc_checklist",
+        "Honesty Boundary": "honesty_boundary",
+        "Source Attribution": "source_attribution",
+        "Manifest": "manifest",
+        "Sources JSON": "sources_json",
+        "Research Dates": "research_dates",
+        "Research Files": "research_files",
+    }
     report = {
         "checked_at": date.today().isoformat(),
         "score": score,
         "passed": passed_count >= len(results) - 1,
-        "checks": {name: "pass" if passed else "fail" for name, passed, _ in results},
+        "checks": {check_keys.get(name, name): "pass" if passed else "fail" for name, passed, _ in results},
         "warnings": [detail for _, passed, detail in results if not passed],
-        "failed_checks": [name for name, passed, _ in results if not passed],
+        "failed_checks": [check_keys.get(name, name) for name, passed, _ in results if not passed],
     }
     (report_dir / "quality-report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python quality_check.py <skill_directory_or_SKILL.md_path>")
+        print("Usage: python quality_check.py <character_card_directory_or_character-card.md_path>")
         sys.exit(1)
 
     skill_dir, skill_path = resolve_paths(sys.argv[1])
     if not skill_path.exists():
-        print(f"FAIL: SKILL.md not found: {skill_path}")
+        print(f"FAIL: character-card.md not found: {skill_path}")
         sys.exit(1)
 
     content = read_text(skill_path)
@@ -176,8 +208,10 @@ def main():
         ("Behavior Patterns", lambda: check_behavior_patterns(content)),
         ("Expression Texture", lambda: check_expression_texture(content)),
         ("Contradictions", lambda: check_contradictions(content)),
-        ("Role-Play Rules", lambda: check_role_play_rules(content)),
-        ("Behavior Examples", lambda: check_behavior_examples(content)),
+        ("Writing View Rules", lambda: check_writing_view_rules(content)),
+        ("Scene Examples", lambda: check_behavior_examples(content)),
+        ("Design Spec", lambda: check_design_spec(content)),
+        ("Anti-OOC Checklist", lambda: check_anti_ooc(content)),
         ("Honesty Boundary", lambda: check_honest_boundary(content)),
         ("Source Attribution", lambda: check_source_attribution(content, skill_dir)),
         ("Manifest", lambda: check_manifest(skill_dir)),

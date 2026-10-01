@@ -3,7 +3,7 @@
 __pycache__/
 *.pyc
 
-# Generated character skills (not part of source tree)
+# Generated character cards (not part of source tree)
 output/
 
 # Internal docs (not needed for skill installation)
@@ -20,3 +20,6 @@ package-lock.json
 # Temp files
 *.txt
 !references/**/*.txt
+
+# Local API config (secrets — never commit)
+test/api_config.json

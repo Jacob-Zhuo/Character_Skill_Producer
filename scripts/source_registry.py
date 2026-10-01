@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Source registry for CSP local source discovery."""
+"""Source registry for CCP local source discovery."""
 
 EXCLUDED_DOMAINS = [
     "zhihu.com",

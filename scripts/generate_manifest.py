@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate or update manifest.json for a CSP character skill directory."""
+"""Generate or update manifest.json for a CCP character card directory."""
 
 import argparse
 import json
@@ -61,15 +61,15 @@ def covered_media_from_files(skill_dir):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate CSP manifest.json")
-    parser.add_argument("skill_dir", help="character skill directory")
+    parser = argparse.ArgumentParser(description="Generate CCP manifest.json")
+    parser.add_argument("skill_dir", help="character card directory")
     parser.add_argument("--character", help="character display name")
     parser.add_argument("--work", help="work/franchise name")
-    parser.add_argument("--csp-version", default="unknown")
+    parser.add_argument("--ccp-version", default="unknown")
     args = parser.parse_args()
 
     skill_dir = Path(args.skill_dir)
-    skill_path = skill_dir / "SKILL.md"
+    skill_path = skill_dir / "character-card.md"
     skill_content = skill_path.read_text(encoding="utf-8") if skill_path.exists() else ""
     records = source_records(skill_dir)
     latest = latest_retrieved_at(records)
@@ -82,6 +82,7 @@ def main():
 
     manifest = {
         "schema_version": "1.0",
+        "artifact_type": "character_card",
         "name": name,
         "character": character,
         "work": work,
@@ -100,7 +101,7 @@ def main():
         "source_tiers": source_tiers(records),
         "quality_score": existing.get("quality_score"),
         "honesty_boundary": existing.get("honesty_boundary", ""),
-        "csp_version": args.csp_version,
+        "ccp_version": args.ccp_version,
     }
 
     output_path = skill_dir / "manifest.json"
