@@ -218,13 +218,13 @@ python scripts/moegirl_api.py "能天使" --full
 CSP 是一个 Claude Code / Agent Skills 风格的 meta-skill。推荐直接安装自包含版本：
 
 ```bash
-skills add qian-gugugaga/Character_Skill_Producer
+skills add Jacob-Zhuo/Character_Skill_Producer
 ```
 
 也可以手动安装：
 
 ```bash
-git clone https://github.com/qian-gugugaga/Character_Skill_Producer.git
+git clone https://github.com/Jacob-Zhuo/Character_Skill_Producer.git
 cp -r Character_Skill_Producer/examples/csp ~/.claude/skills/csp
 ```
 

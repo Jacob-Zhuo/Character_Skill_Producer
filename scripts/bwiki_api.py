@@ -18,7 +18,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-USER_AGENT = "CharacterSkillProducer/1.0 (+https://github.com/qian-gugugaga/Character_Skill_Producer)"
+USER_AGENT = "CharacterSkillProducer/1.0 (+https://github.com/Jacob-Zhuo/Character_Skill_Producer)"
 
 GAME_SLUG_MAP = {
     "原神": "ys",

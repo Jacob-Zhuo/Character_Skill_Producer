@@ -221,5 +221,5 @@ description: |
 
 ---
 
-> 本 Skill 由 [CSP · Character Skill Producer](https://github.com/qian-gugugaga/Character_Skill_Producer) 生成
+> 本 Skill 由 [CSP · Character Skill Producer](https://github.com/Jacob-Zhuo/Character_Skill_Producer) 生成
 ```
